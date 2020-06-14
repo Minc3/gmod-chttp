@@ -17,20 +17,16 @@ Vagrant.configure("2") do |config|
     apt update && apt -y upgrade
     apt -y install build-essential
 
-    # Install custom CMake
-    apt purge --auto-remove cmake
-    apt -y install libssl-dev
-    CMAKE_VER=3.17
-    CMAKE_BUILD=3
-    mkdir /tmp/cmake-build
-    cd /tmp/cmake-build
-    wget -q https://cmake.org/files/v${CMAKE_VER}/cmake-${CMAKE_VER}.${CMAKE_BUILD}.tar.gz
-    tar -xzf cmake-${CMAKE_VER}.${CMAKE_BUILD}.tar.gz
-    cd cmake-${CMAKE_VER}.${CMAKE_BUILD}/
-    ./bootstrap
-    make -j4
-    make install
-    cd /
-    rm -rf /tmp/cmake-build
+    CMAKE_RELEASE="3.17.3_1"
+    if [ "$(uname -m)" = "x86_64" ]; then
+        CMAKE_ARCHIVE="cmake-linux-x64.tar.gz"
+    else
+        CMAKE_ARCHIVE="cmake-linux-x86.tar.gz"
+    fi
+
+    apt -y purge --auto-remove cmake
+    wget -q "https://github.com/timschumi/cmake-static/releases/download/${CMAKE_RELEASE}/${CMAKE_ARCHIVE}"
+    tar -xf "${CMAKE_ARCHIVE}" -C /usr/local
+    rm -rf "${CMAKE_ARCHIVE}"
   SHELL
 end
