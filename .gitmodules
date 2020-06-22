@@ -5,3 +5,6 @@
 [submodule "gmod-common-curl"]
 	path = gmod-common-curl
 	url = https://github.com/timschumi/gmod-common-curl
+[submodule "gmod-sourcesdk"]
+	path = gmod-sourcesdk
+	url = https://github.com/timschumi/gmod-sourcesdk

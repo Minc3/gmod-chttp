@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(gmod-module-base/include)
+add_subdirectory(gmod-sourcesdk)
 add_subdirectory(gmod-common-curl)
 
 add_library(chttp SHARED)
@@ -15,6 +16,9 @@ add_subdirectory(src)
 
 # Link against the GMod API
 target_link_libraries(chttp gmod-module-base)
+
+# Link against libtier0
+target_link_libraries(chttp sdk-tier0)
 
 # Link against curl
 target_link_libraries(chttp curl-phony)
