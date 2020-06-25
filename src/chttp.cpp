@@ -20,6 +20,8 @@ LUA_FUNCTION(CHTTP) {
 	auto *request = new HTTPRequest();
 	std::string failreason;
 
+	DBGMSG("[%p] Allocated HTTPRequest.", request);
+
 	// Fetch failed handler
 	LUA->GetField(1, "failed");
 	if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
@@ -85,10 +87,13 @@ LUA_FUNCTION(CHTTP) {
 	}
 	LUA->Pop();
 
+	DBGMSG("[%p] Scheduling request...", request);
 	getRequestQueue().push(request);
 
 exit:
+
 	if (!failreason.empty()) {
+		DBGMSG("[%p] Request failed. Reason: %s.", request, failreason.c_str());
 		if (request->failed) {
 			// Run the fail handler
 			LUA->ReferencePush(request->failed);

@@ -1,5 +1,7 @@
 #include "threading.h"
 
+#include "log.h"
+
 LockableQueue<HTTPRequest*>& getRequestQueue() {
 	static LockableQueue<HTTPRequest*> requests;
 	return requests;
@@ -14,8 +16,10 @@ void threadFunc() {
 	while (true) {
 		HTTPRequest *request = getRequestQueue().pop(true);
 
-		if (request == nullptr)
+		if (request == nullptr) {
+			MSG("Received nullptr request, exiting thread...");
 			break;
+		}
 
 		request->run();
 		delete request;

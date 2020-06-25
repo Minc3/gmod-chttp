@@ -86,6 +86,8 @@ size_t curl_headermap_append(char *contents, size_t size, size_t nmemb, std::map
 }
 
 bool HTTPRequest::run() {
+	DBGMSG("[%p] Starting to process request.", this);
+
 	CURL *curl = curl_easy_init();
 
 	if (!curl) {
@@ -146,11 +148,14 @@ resend:
 		goto resend;
 	}
 
+	DBGMSG("[%p] Request successful.", this);
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response->code);
 
 	getResultQueue().push(response);
 
 cleanup:
+	DBGMSG("[%p] Cleaning up...", this);
+
 	// Clear out the SuccessQueueData if we don't need it
 	if (!ret) {
 		delete response;
