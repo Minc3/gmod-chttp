@@ -1,5 +1,6 @@
 #include <curl/curl.h>
 
+#include "log.h"
 #include "HTTPRequest.h"
 #include "threading.h"
 
@@ -96,7 +97,6 @@ bool HTTPRequest::run() {
 	bool ret = true;
 	auto *response = new SuccessQueueData(this->success, this->failed);
 	std::string postbody;
-	const char* redirect;
 
 	curlSetMethod(curl, this->method);
 
@@ -122,9 +122,13 @@ bool HTTPRequest::run() {
 
 	curlAddHeaders(curl, this);
 
-	curl_easy_setopt(curl, CURLOPT_URL, this->buildURL().c_str());
+	const char *complete_url;
+	complete_url = this->buildURL().c_str();
 
 resend:
+	curl_easy_setopt(curl, CURLOPT_URL, complete_url);
+	DEV("Sending request to '%s'", complete_url);
+
 	cres = curl_easy_perform(curl);
 
 	if (cres != CURLE_OK) {
@@ -133,15 +137,11 @@ resend:
 		goto cleanup;
 	}
 
-	curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &redirect);
-	if (redirect) {
+	curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &complete_url);
+	if (complete_url) {
 		// Clear out saved headers and body
 		response->headers.clear();
 		response->body.clear();
-
-		// Set the new URL and clear the temp variable
-		curl_easy_setopt(curl, CURLOPT_URL, redirect);
-		redirect = "";
 
 		goto resend;
 	}
