@@ -18,6 +18,7 @@ add_subdirectory(src)
 target_link_libraries(chttp gmod-module-base)
 
 # Link against libtier0
+target_link_libraries(chttp sdk-common)
 target_link_libraries(chttp sdk-tier0)
 
 # Link against curl
