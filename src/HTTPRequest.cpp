@@ -124,8 +124,8 @@ bool HTTPRequest::run() {
 
 	curlAddHeaders(curl, this);
 
-	const char *complete_url;
-	complete_url = this->buildURL().c_str();
+	std::string built_url = this->buildURL();
+	const char *complete_url = built_url.c_str();
 
 resend:
 	curl_easy_setopt(curl, CURLOPT_URL, complete_url);
